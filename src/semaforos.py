@@ -86,7 +86,7 @@ class MySemaphore:
 
         #
         self.frame = tk.Frame(self.window)
-        self.frame.grid(row=6, column=0, columnspan=7,sticky=tk.NSEW)
+        self.frame.grid(row=6, column=0, columnspan=5,sticky=tk.NSEW)
         self.frame.grid_rowconfigure(0, weight=1)
         self.frame.grid_columnconfigure(0, weight=1)
         self.fig = plt.figure()
