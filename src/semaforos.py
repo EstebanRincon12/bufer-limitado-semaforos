@@ -157,7 +157,9 @@ class MySemaphore:
                 print("{} <= produced 'x' at index='{}'".format(buf, producer_idx))
                 self.labelBuffer.config(text="{} => produced '{}' at index='{}'".format(buf, buf[consumer_idx], consumer_idx))
                 counter += 1
-            sleep(3)
+                sleep(1)
+            sleep(1)
+            
 
     def consume(self):
         """represents the behavior of a consumer in the simulation. 
@@ -174,7 +176,9 @@ class MySemaphore:
                 print("{} => consumed '{}' at index='{}'".format(buf, buf[consumer_idx], consumer_idx))
                 self.labelBuffer.config(text="{} => consumed '{}' at index='{}'".format(buf, buf[consumer_idx], consumer_idx))
                 counter -= 1
-            sleep(3)
+                sleep(1)
+            sleep(1)
+            
         
     def createProducer(self, quantity):
         """This method creates a specified number of producer threads by calling the produce method that adds items to the buffer. 
