@@ -2,6 +2,18 @@ from time import sleep
 import tkinter as tk
 from tkinter import ttk
 from threading import Thread, Semaphore
+"""
+    The class implements the "Producers and Consumers" problem using semaphores. 
+    There is a shared region called buffer, which can store a limited number of 
+    elements. There are several producers that produce elements and place them 
+    in the buffer, and there are several consumers that consume elements from the buffer.
+    
+    Author:
+        Catalina Fajardo    tania.fajardo01@uptc.edu.co
+        Esteban Rincon      esteban.rincon@uptc.edu.co
+        Gina Castillo       gina.castillo01@uptc.edu.co
+        Zulma Samaca        zulma.samaca@uptc.edu.co
+"""
 
 ventana = tk.Tk()
 ventana.geometry('800x500')
