@@ -155,7 +155,7 @@ class MySemaphore:
                 buf[producer_idx] = "x"
                 producer_idx = (producer_idx + 1) % buf_size
                 print("{} <= produced 'x' at index='{}'".format(buf, producer_idx))
-                self.labelBuffer.config(text="{} => produced '{}' at index='{}'".format(buf, buf[consumer_idx], consumer_idx))
+                self.labelBuffer.config(text="{} => produced '{}' at index='{}'".format(buf, buf[producer_idx], producer_idx))
                 counter += 1
                 sleep(1)
             sleep(1)
