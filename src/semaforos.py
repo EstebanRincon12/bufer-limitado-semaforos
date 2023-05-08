@@ -31,46 +31,46 @@ class Semaphore:
         implemented with the Python tkinter library. This function initializes and configures 
         various elements of the window, including labels, inputs, buttons and canvas.
         """
-        self.ventana = tk.Tk()
-        self.ventana.geometry('800x500')
-        self.ventana.title('Productores y Consumidores con semáforos')
+        self.window = tk.Tk()
+        self.window.geometry('800x500')
+        self.window.title('Productores y Consumidores con semáforos')
 
         # Create labels for the GUI
-        self.labelTitle = tk.Label(self.ventana, text='Productores y Consumidores con semáforos')
-        self.labelNumberConsumer = ttk.Label(self.ventana, text='N° Consumidores')
-        self.labelNumberProductors = ttk.Label(self.ventana, text='N° Productores')
-        self.labelSizeBuffer = ttk.Label(self.ventana, text='Tamaño Buffer')
-        self.labelBuffer = ttk.Label(self.ventana, text='Buffer')
+        self.labelTitle = tk.Label(self.window, text='Productores y Consumidores con semáforos')
+        self.labelNumberConsumer = ttk.Label(self.window, text='N° Consumidores')
+        self.labelNumberProductors = ttk.Label(self.window, text='N° Productores')
+        self.labelSizeBuffer = ttk.Label(self.window, text='Tamaño Buffer')
+        self.labelBuffer = ttk.Label(self.window, text='Buffer')
 
         # Create entries for the GUI
-        self.entryProductos = ttk.Entry(self.ventana)
-        self.entryConsumers = ttk.Entry(self.ventana)
-        self.entrySizeBuffer = ttk.Entry(self.ventana)
+        self.entryProductos = ttk.Entry(self.window)
+        self.entryConsumers = ttk.Entry(self.window)
+        self.entrySizeBuffer = ttk.Entry(self.window)
 
 
-        self.buttonStart = ttk.Button(self.ventana, text='Iniciar', command=self.startSimulation)
-        self.buttonStop = ttk.Button(self.ventana, text='Detener', command=self.stopSimulation)
+        self.buttonStart = ttk.Button(self.window, text='Iniciar', command=self.startSimulation)
+        self.buttonStop = ttk.Button(self.window, text='Detener', command=self.stopSimulation)
         # Create a canvas for the GUI
-        self.canvas = tk.Canvas(master=self.ventana, width=700, height=100)
+        self.canvas = tk.Canvas(master=self.window, width=700, height=100)
         # Configure the rows and columns of the GUI layout
-        self.ventana.rowconfigure(0, weight=1)
-        self.ventana.rowconfigure(1, weight=1)
-        self.ventana.columnconfigure(0, weight=1)
-        self.ventana.columnconfigure(1, weight=1)
-        self.ventana.rowconfigure(2, weight=1)
-        self.ventana.rowconfigure(3, weight=1)
-        self.ventana.rowconfigure(4, weight=1)
-        self.ventana.rowconfigure(5, weight=1)
-        self.ventana.rowconfigure(6, weight=1)
-        self.ventana.rowconfigure(7, weight=1)
-        self.ventana.rowconfigure(8, weight=1)
-        self.ventana.rowconfigure(9, weight=1)
-        self.ventana.columnconfigure(2, weight=1)
-        self.ventana.columnconfigure(3, weight=1)
-        self.ventana.columnconfigure(3, weight=1)
-        self.ventana.columnconfigure(4, weight=1)
-        self.ventana.columnconfigure(5, weight=1)
-        self.ventana.columnconfigure(6, weight=1)
+        self.window.rowconfigure(0, weight=1)
+        self.window.rowconfigure(1, weight=1)
+        self.window.columnconfigure(0, weight=1)
+        self.window.columnconfigure(1, weight=1)
+        self.window.rowconfigure(2, weight=1)
+        self.window.rowconfigure(3, weight=1)
+        self.window.rowconfigure(4, weight=1)
+        self.window.rowconfigure(5, weight=1)
+        self.window.rowconfigure(6, weight=1)
+        self.window.rowconfigure(7, weight=1)
+        self.window.rowconfigure(8, weight=1)
+        self.window.rowconfigure(9, weight=1)
+        self.window.columnconfigure(2, weight=1)
+        self.window.columnconfigure(3, weight=1)
+        self.window.columnconfigure(3, weight=1)
+        self.window.columnconfigure(4, weight=1)
+        self.window.columnconfigure(5, weight=1)
+        self.window.columnconfigure(6, weight=1)
         # Add the GUI elements to the window
         self.labelTitle.grid(row=0, column=0, columnspan=7)
         self.labelNumberProductors.grid(row=1, column=0)
@@ -170,8 +170,8 @@ class Semaphore:
         """
         global running
         running = False
-        self.ventana.destroy()
+        self.window.destroy()
 
 view = Semaphore()
-view.ventana.protocol("WM_DELETE_WINDOW", view.closeSimulation)
-view.ventana.mainloop()
+view.window.protocol("WM_DELETE_WINDOW", view.closeSimulation)
+view.window.mainloop()
