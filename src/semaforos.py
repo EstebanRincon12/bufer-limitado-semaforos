@@ -45,11 +45,14 @@ class MySemaphore:
         self.labelSizeBuffer = ttk.Label(self.window, text='Tamaño Buffer', font=("Roboto",13), background="white")
         self.labelBuffer = ttk.Label(self.window, text='Buffer', font=("Roboto",13), background="white")
 
-        # Create entries for the GUI
-        self.entryProductos = ttk.Entry(self.window,font=("Roboto",13))
-        self.entryConsumers = ttk.Entry(self.window,font=("Roboto",13))
-        self.entrySizeBuffer = ttk.Entry(self.window,font=("Roboto",13))
+ 
+        # Configure input validation to accept only numbers
+        validate_cmd = (self.window.register(self.validate_numbers), '%P')
 
+        # Create entries for the GUI
+        self.entryProductos = ttk.Entry(self.window,font=("Roboto",13),validate="key", validatecommand=validate_cmd)
+        self.entryConsumers = ttk.Entry(self.window,font=("Roboto",13),validate="key", validatecommand=validate_cmd)
+        self.entrySizeBuffer = ttk.Entry(self.window,font=("Roboto",13),validate="key", validatecommand=validate_cmd)
 
         self.buttonStart = ttk.Button(self.window, text='Iniciar', command=self.startSimulation)
         self.buttonStop = ttk.Button(self.window, text='Detener', command=self.stopSimulation)
