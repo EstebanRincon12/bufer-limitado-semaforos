@@ -2,7 +2,8 @@ from time import sleep
 import tkinter as tk
 from tkinter import ttk
 from threading import Thread, Semaphore
-
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 s = Semaphore(1)
 buf = []
@@ -13,8 +14,9 @@ producers = list()
 consumers = list()
 running = True
 buf_size = len(buf)
+buffer_values = []
 
-class Semaphore:
+class MySemaphore:
     """The class implements the "Producers and Consumers" problem using semaphores. 
     There is a shared region called buffer, which can store a limited number of 
     elements. There are several producers that produce elements and place them 
@@ -31,58 +33,94 @@ class Semaphore:
         implemented with the Python tkinter library. This function initializes and configures 
         various elements of the window, including labels, inputs, buttons and canvas.
         """
-        self.ventana = tk.Tk()
-        self.ventana.geometry('800x500')
-        self.ventana.title('Productores y Consumidores con semáforos')
+        self.window = tk.Tk()
+        self.window.geometry('1100x800')
+        self.window.configure(bg="")
+        self.window.title('Productores y Consumidores con semáforos')
 
         # Create labels for the GUI
-        self.labelTitle = tk.Label(self.ventana, text='Productores y Consumidores con semáforos')
-        self.labelNumberConsumer = ttk.Label(self.ventana, text='N° Consumidores')
-        self.labelNumberProductors = ttk.Label(self.ventana, text='N° Productores')
-        self.labelSizeBuffer = ttk.Label(self.ventana, text='Tamaño Buffer')
-        self.labelBuffer = ttk.Label(self.ventana, text='Buffer')
+        self.labelTitle = tk.Label(self.window, text='Productores y Consumidores  (Semáforos)', font=("Roboto",20,'bold'), fg="#42843B", bg="white")
+        self.labelNumberConsumer = ttk.Label(self.window, text='Cantidad de Consumidores',  font=("Roboto",12), background="white")
+        self.labelNumberProductors = ttk.Label(self.window, text='Cantidad de Productores',  font=("Roboto",12) ,background="white")
+        self.labelSizeBuffer = ttk.Label(self.window, text='Tamaño Buffer',  font=("Roboto",12), background="white")
+        self.labelBuffer = ttk.Label(self.window, text='Buffer',  font=("Roboto",12), background="white")
+        
+        # Configure input validation to accept only numbers
+        validate_cmd = (self.window.register(self.validate_numbers), '%P')
 
         # Create entries for the GUI
-        self.entryProductos = ttk.Entry(self.ventana)
-        self.entryConsumers = ttk.Entry(self.ventana)
-        self.entrySizeBuffer = ttk.Entry(self.ventana)
+        self.entryProductos = ttk.Entry(self.window,font=("Roboto",13),validate="key", validatecommand=validate_cmd)
+        self.entryConsumers = ttk.Entry(self.window,font=("Roboto",13),validate="key", validatecommand=validate_cmd)
+        self.entrySizeBuffer = ttk.Entry(self.window,font=("Roboto",13),validate="key", validatecommand=validate_cmd)
 
-
-        self.buttonStart = ttk.Button(self.ventana, text='Iniciar', command=self.startSimulation)
-        self.buttonStop = ttk.Button(self.ventana, text='Detener', command=self.stopSimulation)
+        self.buttonStart = ttk.Button(self.window, text='Iniciar', command=self.startSimulation)
+        self.buttonStop = ttk.Button(self.window, text='Detener', command=self.stopSimulation)
+        
         # Create a canvas for the GUI
-        self.canvas = tk.Canvas(master=self.ventana, width=700, height=100)
+        self.canvas = tk.Canvas(master=self.window, width=700, height=100)
+        
         # Configure the rows and columns of the GUI layout
-        self.ventana.rowconfigure(0, weight=1)
-        self.ventana.rowconfigure(1, weight=1)
-        self.ventana.columnconfigure(0, weight=1)
-        self.ventana.columnconfigure(1, weight=1)
-        self.ventana.rowconfigure(2, weight=1)
-        self.ventana.rowconfigure(3, weight=1)
-        self.ventana.rowconfigure(4, weight=1)
-        self.ventana.rowconfigure(5, weight=1)
-        self.ventana.rowconfigure(6, weight=1)
-        self.ventana.rowconfigure(7, weight=1)
-        self.ventana.rowconfigure(8, weight=1)
-        self.ventana.rowconfigure(9, weight=1)
-        self.ventana.columnconfigure(2, weight=1)
-        self.ventana.columnconfigure(3, weight=1)
-        self.ventana.columnconfigure(3, weight=1)
-        self.ventana.columnconfigure(4, weight=1)
-        self.ventana.columnconfigure(5, weight=1)
-        self.ventana.columnconfigure(6, weight=1)
+        self.window.rowconfigure(0, weight=1)
+        self.window.rowconfigure(1, weight=1)
+        self.window.columnconfigure(0, weight=1)
+        self.window.columnconfigure(1, weight=1)
+        self.window.rowconfigure(2, weight=1)
+        self.window.rowconfigure(3, weight=1)
+        self.window.rowconfigure(4, weight=1)
+        self.window.rowconfigure(5, weight=1)
+        self.window.rowconfigure(6, weight=1)
+        self.window.rowconfigure(7, weight=1)
+        self.window.rowconfigure(8, weight=1)
+        self.window.rowconfigure(9, weight=1)
+        self.window.columnconfigure(2, weight=1)
+        self.window.columnconfigure(3, weight=1)
+        self.window.columnconfigure(3, weight=1)
+        self.window.columnconfigure(4, weight=1)
+        self.window.columnconfigure(5, weight=1)
+        self.window.columnconfigure(6, weight=1)
+        
         # Add the GUI elements to the window
         self.labelTitle.grid(row=0, column=0, columnspan=7)
-        self.labelNumberProductors.grid(row=1, column=0)
-        self.labelNumberConsumer.grid(row=1, column=2)
-        self.labelSizeBuffer.grid(row=1, column=4)
-        self.entryProductos.grid(row=1, column=1)
-        self.entryConsumers.grid(row=1, column=3)
-        self.entrySizeBuffer.grid(row=1, column=5)
-        self.buttonStart.grid(row=1, column=6)
-        self.buttonStop.grid(row=2, column=6)
-        self.labelBuffer.grid(row=2, column=0, columnspan=7, rowspan=7)
-        
+        self.labelNumberProductors.grid(row=1, column=1)
+        self.labelNumberConsumer.grid(row=2, column=1)
+        self.labelSizeBuffer.grid(row=3, column=1)
+        self.entryProductos.grid(row=1, column=2)
+        self.entryConsumers.grid(row=2, column=2)
+        self.entrySizeBuffer.grid(row=3, column=2)
+        self.buttonStart.grid(row=4, column=2)
+        self.buttonStop.grid(row=5, column=2)
+
+        #
+        self.frame = tk.Frame(self.window)
+        self.frame.grid(row=6, column=0, columnspan=7,sticky=tk.NSEW)
+        self.frame.grid_rowconfigure(0, weight=1)
+        self.frame.grid_columnconfigure(0, weight=1)
+        self.fig = plt.figure()
+        self.canvas = FigureCanvasTkAgg(self.fig, master=self.frame)
+        self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        plt.xlabel('Tiempo')
+        plt.ylabel('Cantidad de productos en el buffer')
+
+        self.labelBuffer.grid(row=7, column=0, columnspan=7, rowspan=7)
+
+    def validate_numbers(self, value):
+        """Validates whether a value is a positive integer
+
+        Args:
+            value (any): value which can be a number or a letter 
+
+        Returns:
+            boolean: If the value is a positive integer, it returns True, 
+            which means that the input will be allowed. If the value is an empty string, 
+            it also returns True, which means that an empty input will be allowed. 
+            In any other case, it returns False, which means that the input will not be allowed.
+        """
+        if value.isdigit():
+            return True
+        elif value == "":
+            return True
+        else:
+            return False
 
 
     def startSimulation(self):
@@ -100,7 +138,10 @@ class Semaphore:
         numberProductors = int(self.entryProductos.get())
         self.createConsumers(numberConsumers)
         self.createProducer(numberProductors)
-        
+
+        buffer_values.append(numberProductors)
+
+
     def produce(self):
         """This method represents the producer behavior of the producer-consumer problem. 
         It tries to add an item to the shared buffer until the buffer is full. 
@@ -119,7 +160,6 @@ class Semaphore:
                 counter += 1
             sleep(1)
 
-        
     def consume(self):
         """represents the behavior of a consumer in the simulation. 
         It is executed in a loop while the simulation is running. 
@@ -166,12 +206,12 @@ class Semaphore:
 
         
     def closeSimulation(self):
-        """This method closes the simulation by setting the running flag to False and destroying the main window of the simulation (self.ventana).
+        """This method closes the simulation by setting the running flag to False and destroying the main window of the simulation (self.window).
         """
         global running
         running = False
-        self.ventana.destroy()
+        self.window.destroy()
 
-view = Semaphore()
-view.ventana.protocol("WM_DELETE_WINDOW", view.closeSimulation)
-view.ventana.mainloop()
+view = MySemaphore()
+view.window.protocol("WM_DELETE_WINDOW", view.closeSimulation)
+view.window.mainloop()
