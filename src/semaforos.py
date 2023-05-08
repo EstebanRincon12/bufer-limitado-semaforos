@@ -34,25 +34,25 @@ class MySemaphore:
         various elements of the window, including labels, inputs, buttons and canvas.
         """
         self.window = tk.Tk()
-        self.window.geometry('1100x800')
+        self.window.resizable(False, False)
+        self.window.geometry('800x500')
         self.window.configure(bg="")
         self.window.title('Productores y Consumidores con semáforos')
 
         # Create labels for the GUI
-        self.labelTitle = tk.Label(self.window, text='Productores y Consumidores  (Semáforos)', font=("Roboto",20,'bold'), fg="#a80f1c", bg="white")
-        self.labelNumberConsumer = ttk.Label(self.window, text='Cantidad de Consumidores',  font=("Roboto",13), background="white")
-        self.labelNumberProductors = ttk.Label(self.window, text='Cantidad de Productores',  font=("Roboto",13) ,background="white")
-        self.labelSizeBuffer = ttk.Label(self.window, text='Tamaño Buffer', font=("Roboto",13), background="white")
-        self.labelBuffer = ttk.Label(self.window, text='Buffer', font=("Roboto",13), background="white")
+        self.labelTitle = tk.Label(self.window, text='Productores y Consumidores  (Semáforos)', font=("Roboto",20,'bold'), fg="#42843B", bg="white")
+        self.labelNumberConsumer = ttk.Label(self.window, text='Cantidad de Consumidores',  font=("Roboto",12), background="white")
+        self.labelNumberProductors = ttk.Label(self.window, text='Cantidad de Productores',  font=("Roboto",12) ,background="white")
+        self.labelSizeBuffer = ttk.Label(self.window, text='Tamaño Buffer', font=("Roboto",12), background="white")
+        self.labelBuffer = ttk.Label(self.window, text='Buffer', font=("Roboto",12), background="white")
 
- 
         # Configure input validation to accept only numbers
         validate_cmd = (self.window.register(self.validate_numbers), '%P')
 
         # Create entries for the GUI
-        self.entryProductos = ttk.Entry(self.window,font=("Roboto",13),validate="key", validatecommand=validate_cmd)
-        self.entryConsumers = ttk.Entry(self.window,font=("Roboto",13),validate="key", validatecommand=validate_cmd)
-        self.entrySizeBuffer = ttk.Entry(self.window,font=("Roboto",13),validate="key", validatecommand=validate_cmd)
+        self.entryProductos = ttk.Entry(self.window,font=("Roboto",12),validate="key", validatecommand=validate_cmd)
+        self.entryConsumers = ttk.Entry(self.window,font=("Roboto",12),validate="key", validatecommand=validate_cmd)
+        self.entrySizeBuffer = ttk.Entry(self.window,font=("Roboto",12),validate="key", validatecommand=validate_cmd)
 
         self.buttonStart = ttk.Button(self.window, text='Iniciar', command=self.startSimulation)
         self.buttonStop = ttk.Button(self.window, text='Detener', command=self.stopSimulation)
@@ -77,6 +77,7 @@ class MySemaphore:
         self.window.columnconfigure(4, weight=1)
         self.window.columnconfigure(5, weight=1)
         self.window.columnconfigure(6, weight=1)
+       
         # Add the GUI elements to the window
         self.labelTitle.grid(row=0, column=0, columnspan=7)
         self.labelNumberProductors.grid(row=1, column=1)
@@ -88,16 +89,16 @@ class MySemaphore:
         self.buttonStart.grid(row=4, column=2)
         self.buttonStop.grid(row=5, column=2)
 
-        #
-        self.frame = tk.Frame(self.window)
-        self.frame.grid(row=6, column=0, columnspan=5,sticky=tk.NSEW)
-        self.frame.grid_rowconfigure(0, weight=1)
-        self.frame.grid_columnconfigure(0, weight=1)
-        self.fig = plt.figure()
-        self.canvas = FigureCanvasTkAgg(self.fig, master=self.frame)
-        self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        plt.xlabel('Tiempo')
-        plt.ylabel('Cantidad de productos en el buffer')
+        # #
+        # self.frame = tk.Frame(self.window)
+        # self.frame.grid(row=6, column=0, columnspan=5,sticky=tk.NSEW)
+        # self.frame.grid_rowconfigure(0, weight=1)
+        # self.frame.grid_columnconfigure(0, weight=1)
+        # self.fig = plt.figure()
+        # self.canvas = FigureCanvasTkAgg(self.fig, master=self.frame)
+        # self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        # plt.xlabel('Tiempo')
+        # plt.ylabel('Cantidad de productos en el buffer')
 
         self.labelBuffer.grid(row=7, column=0, columnspan=5, rowspan=4)
 
@@ -154,9 +155,9 @@ class MySemaphore:
                 buf[producer_idx] = "x"
                 producer_idx = (producer_idx + 1) % buf_size
                 print("{} <= produced 'x' at index='{}'".format(buf, producer_idx))
-                self.labelBuffer.config(text="{} => consumed '{}' at index='{}'".format(buf, buf[consumer_idx], consumer_idx))
+                self.labelBuffer.config(text="{} => produced '{}' at index='{}'".format(buf, buf[consumer_idx], consumer_idx))
                 counter += 1
-            sleep(1)
+            sleep(3)
 
     def consume(self):
         """represents the behavior of a consumer in the simulation. 
@@ -171,8 +172,9 @@ class MySemaphore:
                 buf[consumer_idx] = " "
                 consumer_idx = (consumer_idx + 1) % buf_size
                 print("{} => consumed '{}' at index='{}'".format(buf, buf[consumer_idx], consumer_idx))
+                self.labelBuffer.config(text="{} => consumed '{}' at index='{}'".format(buf, buf[consumer_idx], consumer_idx))
                 counter -= 1
-            sleep(1)
+            sleep(3)
         
     def createProducer(self, quantity):
         """This method creates a specified number of producer threads by calling the produce method that adds items to the buffer. 
