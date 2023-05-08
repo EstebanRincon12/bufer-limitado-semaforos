@@ -14,8 +14,8 @@ consumers = list()
 running = True
 buf_size = len(buf)
 
-"""
-    The class implements the "Producers and Consumers" problem using semaphores. 
+class Semaphore:
+    """The class implements the "Producers and Consumers" problem using semaphores. 
     There is a shared region called buffer, which can store a limited number of 
     elements. There are several producers that produce elements and place them 
     in the buffer, and there are several consumers that consume elements from the buffer.
@@ -25,13 +25,15 @@ buf_size = len(buf)
         Esteban Rincon      esteban.rincon@uptc.edu.co
         Gina Castillo       gina.castillo01@uptc.edu.co
         Zulma Samaca        zulma.samaca@uptc.edu.co
-"""
-class Semaphore:
+    """
     def __init__(self):
-        # Initialize the attributes of the class
-        self.ventana = tk.Tk() # Create a new window
-        self.ventana.geometry('800x500') # Set the window size
-        self.ventana.title('Productores y Consumidores con semáforos') # Set the window title
+        """constructor of a class representing a window in a graphical user interface (GUI) 
+        implemented with the Python tkinter library. This function initializes and configures 
+        various elements of the window, including labels, inputs, buttons and canvas.
+        """
+        self.ventana = tk.Tk()
+        self.ventana.geometry('800x500')
+        self.ventana.title('Productores y Consumidores con semáforos')
 
         # Create labels for the GUI
         self.labelTitle = tk.Label(self.ventana, text='Productores y Consumidores con semáforos')
@@ -45,8 +47,7 @@ class Semaphore:
         self.entryConsumers = ttk.Entry(self.ventana)
         self.entrySizeBuffer = ttk.Entry(self.ventana)
 
-    
-        # Create buttons for the GUI
+
         self.buttonStart = ttk.Button(self.ventana, text='Iniciar', command=self.startSimulation)
         self.buttonStop = ttk.Button(self.ventana, text='Detener', command=self.stopSimulation)
         # Create a canvas for the GUI
@@ -83,7 +84,7 @@ class Semaphore:
         self.labelBuffer.grid(row=2, column=0, columnspan=7, rowspan=7)
         
 
-        
+
     def startSimulation(self):
         """This method sets up and starts the simulation of a producer-consumer problem with a buffer of a given size.
             It initializes some global variables, such as running, producer_idx, consumer_idx, counter, buf, and buf_size.
@@ -99,7 +100,6 @@ class Semaphore:
         numberProductors = int(self.entryProductos.get())
         self.createConsumers(numberConsumers)
         self.createProducer(numberProductors)
-
         
     def produce(self):
         """This method represents the producer behavior of the producer-consumer problem. 
