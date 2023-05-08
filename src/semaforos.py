@@ -33,46 +33,47 @@ class MySemaphore:
         implemented with the Python tkinter library. This function initializes and configures 
         various elements of the window, including labels, inputs, buttons and canvas.
         """
-        self.ventana = tk.Tk()
-        self.ventana.geometry('800x500')
-        self.ventana.title('Productores y Consumidores con semáforos')
+        self.window = tk.Tk()
+        self.window.geometry('1100x800')
+        self.window.configure(bg="")
+        self.window.title('Productores y Consumidores con semáforos')
 
         # Create labels for the GUI
-        self.labelTitle = tk.Label(self.ventana, text='Productores y Consumidores con semáforos')
-        self.labelNumberConsumer = ttk.Label(self.ventana, text='N° Consumidores')
-        self.labelNumberProductors = ttk.Label(self.ventana, text='N° Productores')
-        self.labelSizeBuffer = ttk.Label(self.ventana, text='Tamaño Buffer')
-        self.labelBuffer = ttk.Label(self.ventana, text='Buffer')
+        self.labelTitle = tk.Label(self.window, text='Productores y Consumidores  (Semáforos)', font=("Roboto",20,'bold'), fg="#a80f1c", bg="white")
+        self.labelNumberConsumer = ttk.Label(self.window, text='Cantidad de Consumidores',  font=("Roboto",13), background="white")
+        self.labelNumberProductors = ttk.Label(self.window, text='Cantidad de Productores',  font=("Roboto",13) ,background="white")
+        self.labelSizeBuffer = ttk.Label(self.window, text='Tamaño Buffer', font=("Roboto",13), background="white")
+        self.labelBuffer = ttk.Label(self.window, text='Buffer', font=("Roboto",13), background="white")
 
         # Create entries for the GUI
-        self.entryProductos = ttk.Entry(self.ventana)
-        self.entryConsumers = ttk.Entry(self.ventana)
-        self.entrySizeBuffer = ttk.Entry(self.ventana)
+        self.entryProductos = ttk.Entry(self.window,font=("Roboto",13))
+        self.entryConsumers = ttk.Entry(self.window,font=("Roboto",13))
+        self.entrySizeBuffer = ttk.Entry(self.window,font=("Roboto",13))
 
 
-        self.buttonStart = ttk.Button(self.ventana, text='Iniciar', command=self.startSimulation)
-        self.buttonStop = ttk.Button(self.ventana, text='Detener', command=self.stopSimulation)
+        self.buttonStart = ttk.Button(self.window, text='Iniciar', command=self.startSimulation)
+        self.buttonStop = ttk.Button(self.window, text='Detener', command=self.stopSimulation)
         # Create a canvas for the GUI
-        self.canvas = tk.Canvas(master=self.ventana, width=700, height=100)
+        self.canvas = tk.Canvas(master=self.window, width=700, height=100)
         # Configure the rows and columns of the GUI layout
-        self.ventana.rowconfigure(0, weight=1)
-        self.ventana.rowconfigure(1, weight=1)
-        self.ventana.columnconfigure(0, weight=1)
-        self.ventana.columnconfigure(1, weight=1)
-        self.ventana.rowconfigure(2, weight=1)
-        self.ventana.rowconfigure(3, weight=1)
-        self.ventana.rowconfigure(4, weight=1)
-        self.ventana.rowconfigure(5, weight=1)
-        self.ventana.rowconfigure(6, weight=1)
-        self.ventana.rowconfigure(7, weight=1)
-        self.ventana.rowconfigure(8, weight=1)
-        self.ventana.rowconfigure(9, weight=1)
-        self.ventana.columnconfigure(2, weight=1)
-        self.ventana.columnconfigure(3, weight=1)
-        self.ventana.columnconfigure(3, weight=1)
-        self.ventana.columnconfigure(4, weight=1)
-        self.ventana.columnconfigure(5, weight=1)
-        self.ventana.columnconfigure(6, weight=1)
+        self.window.rowconfigure(0, weight=1)
+        self.window.rowconfigure(1, weight=1)
+        self.window.columnconfigure(0, weight=1)
+        self.window.columnconfigure(1, weight=1)
+        self.window.rowconfigure(2, weight=1)
+        self.window.rowconfigure(3, weight=1)
+        self.window.rowconfigure(4, weight=1)
+        self.window.rowconfigure(5, weight=1)
+        self.window.rowconfigure(6, weight=1)
+        self.window.rowconfigure(7, weight=1)
+        self.window.rowconfigure(8, weight=1)
+        self.window.rowconfigure(9, weight=1)
+        self.window.columnconfigure(2, weight=1)
+        self.window.columnconfigure(3, weight=1)
+        self.window.columnconfigure(3, weight=1)
+        self.window.columnconfigure(4, weight=1)
+        self.window.columnconfigure(5, weight=1)
+        self.window.columnconfigure(6, weight=1)
         # Add the GUI elements to the window
         self.labelTitle.grid(row=0, column=0, columnspan=7)
         self.labelNumberProductors.grid(row=1, column=1)
@@ -95,7 +96,7 @@ class MySemaphore:
         plt.xlabel('Tiempo')
         plt.ylabel('Cantidad de productos en el buffer')
 
-        self.labelBuffer.grid(row=7, column=0, columnspan=7, rowspan=7)
+        self.labelBuffer.grid(row=7, column=0, columnspan=5, rowspan=4)
 
     def validate_numbers(self, value):
         """Validates whether a value is a positive integer
@@ -206,6 +207,6 @@ class MySemaphore:
         running = False
         self.window.destroy()
 
-view = Semaphore()
-view.ventana.protocol("WM_DELETE_WINDOW", view.closeSimulation)
-view.ventana.mainloop()
+view = MySemaphore()
+view.window.protocol("WM_DELETE_WINDOW", view.closeSimulation)
+view.window.mainloop()
