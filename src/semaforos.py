@@ -34,7 +34,7 @@ class MySemaphore:
         """
         self.window = tk.Tk()
         self.window.resizable(False, False)
-        self.window.geometry('800x790')
+        self.window.geometry('800x600')
         self.window.configure(bg="")
         self.window.title('Productores y Consumidores con semáforos')
 
@@ -43,10 +43,19 @@ class MySemaphore:
         self.labelNumberConsumer = ttk.Label(self.window, text='Cantidad de Consumidores',  font=("Roboto",11), background="white")
         self.labelNumberProductors = ttk.Label(self.window, text='Cantidad de Productores',  font=("Roboto",11) ,background="white")
         self.labelSizeBuffer = ttk.Label(self.window, text='Tamaño Buffer', font=("Roboto",11), background="white")
-        self.labelBuffer = tk.Text(self.window, font=("Roboto",10), background="white", height=6, width=90)
+        self.labelBuffer = tk.Text(self.window, font=("Roboto",10), background="white", height=10, width=90)
         self.labelBuffer.config(state="disabled")
 
-        self.label =  ttk.Label(self.window, text='Buffer \n Elementos en el buffer: 0', background="white")
+        self.label =  ttk.Label(self.window, text='Buffer ', background="white")
+        
+        # Create a scrollbar
+        self.scrollbar = tk.Scrollbar(self.window)
+        self.scrollbar.grid(row=8, column=5, rowspan=4, sticky="ns")
+
+        # Configure the scrollbar to work with the Text widget
+        self.labelBuffer.config(yscrollcommand=self.scrollbar.set)
+        self.scrollbar.config(command=self.labelBuffer.yview)
+        
         self.labelHistory = ttk.Label(self.window, text='Historial del Buffer', font=("Roboto",12), background="white")
 
         # Configure input validation to accept only numbers
@@ -91,22 +100,12 @@ class MySemaphore:
         self.entryProductos.grid(row=1, column=2, rowspan=2)
         self.entryConsumers.grid(row=2, column=2, rowspan=2)
         self.entrySizeBuffer.grid(row=3, column=2, rowspan=2)
-        self.buttonStart.grid(row=5, column=2, rowspan=2)
-        self.buttonStop.grid(row=6, column=2,rowspan=2)
-        self.label.grid(row=7, column=1, rowspan=2,columnspan=4)
-        self.labelHistory.grid(row=8, column=1, columnspan=4)
-        # #
-        # self.frame = tk.Frame(self.window)
-        # self.frame.grid(row=6, column=0, columnspan=5,sticky=tk.NSEW)
-        # self.frame.grid_rowconfigure(0, weight=1)
-        # self.frame.grid_columnconfigure(0, weight=1)
-        # self.fig = plt.figure()
-        # self.canvas = FigureCanvasTkAgg(self.fig, master=self.frame)
-        # self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        # plt.xlabel('Tiempo')
-        # plt.ylabel('Cantidad de productos en el buffer')
+        self.buttonStart.grid(row=4, column=1, rowspan=2)
+        self.buttonStop.grid(row=4, column=3,rowspan=2)
+        self.label.grid(row=5, column=1, rowspan=2,columnspan=4)
+        self.labelHistory.grid(row=7, column=1, columnspan=4)
 
-        self.labelBuffer.grid(row=9, column=0, columnspan=12, rowspan=4)
+        self.labelBuffer.grid(row=8, column=0, columnspan=12, rowspan=4)
 
     def validate_numbers(self, value):
         """Validates whether a value is a positive integer
@@ -157,17 +156,27 @@ class MySemaphore:
         while running:
             with s:
                 if counter == buf_size:  # full
+                    print("Buffer está lleno\n ")
+                    self.labelBuffer.config(state="normal")
+                    self.labelBuffer.insert("end", " Buffer está lleno \n ")
+                    self.labelBuffer.see("end")
+                    self.labelBuffer.config(state="disabled")
+                    sleep(0.1)
+                    s.release()
                     continue
+                s.acquire()
                 buf[producer_idx] = " + "
                 producer_idx = (producer_idx + 1) % buf_size
                 print("Productor {}: produjo {} \n Buffer {}  \n Elementos en el buffer {}".format(producer_idx, buf[producer_idx], buf, counter+1))
-                self.label.config(text="Buffer: [{}] \n Elementos en el buffer: {}".format(' '.join(buf), counter+1))
                 self.labelBuffer.config(state="normal")
                 self.labelBuffer.insert("end","Productor     [{}]: produjo elemento en posicion = {} \n \n".format(' '.join(buf), producer_idx))
                 self.labelBuffer.see("end")
                 self.labelBuffer.config(state="disabled")
                 counter += 1
-                sleep(1)
+                self.label.config(text="Buffer: [{}] ".format(' '.join(buf)))
+
+                sleep(0.5)
+                s.release()
             sleep(1)
             
 
@@ -180,7 +189,15 @@ class MySemaphore:
         while running:
             with s:
                 if counter == 0:  # empty
+                    print("Buffer está Vacio\n ")
+                    self.labelBuffer.config(state="normal")
+                    self.labelBuffer.insert("end", "Buffer está Vacio\n ")
+                    self.labelBuffer.see("end")
+                    self.labelBuffer.config(state="disabled")
+                    sleep(0.1)
+                    s.release()
                     continue
+                s.acquire()
                 buf[consumer_idx] = " - "
                 consumer_idx = (consumer_idx + 1) % buf_size
                 print("Consumidor {}: consumió {} \n Buffer {}".format(consumer_idx, buf[consumer_idx], buf))
@@ -189,7 +206,9 @@ class MySemaphore:
                 self.labelBuffer.see("end")
                 self.labelBuffer.config(state="disabled")
                 counter -= 1
-                sleep(1)
+                
+                s.release()
+                sleep(0.5)
             sleep(1)
             
         
