@@ -2,8 +2,7 @@ from time import sleep
 import tkinter as tk
 from tkinter import ttk
 from threading import Thread, Semaphore
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
 
 s = Semaphore(1)
 buf = []
@@ -44,7 +43,10 @@ class MySemaphore:
         self.labelNumberConsumer = ttk.Label(self.window, text='Cantidad de Consumidores',  font=("Roboto",12), background="white")
         self.labelNumberProductors = ttk.Label(self.window, text='Cantidad de Productores',  font=("Roboto",12) ,background="white")
         self.labelSizeBuffer = ttk.Label(self.window, text='Tamaño Buffer', font=("Roboto",12), background="white")
-        self.labelBuffer = ttk.Label(self.window, text='Buffer', font=("Roboto",12), background="white")
+        self.labelBuffer = tk.Text(self.window, font=("Roboto",12), background="white", height=10, width=60)
+        self.labelBuffer.config(state="disabled")
+
+        self.label =  ttk.Label(self.window, text='Buffer', background="white")
 
         # Configure input validation to accept only numbers
         validate_cmd = (self.window.register(self.validate_numbers), '%P')
@@ -56,8 +58,10 @@ class MySemaphore:
 
         self.buttonStart = ttk.Button(self.window, text='Iniciar', command=self.startSimulation)
         self.buttonStop = ttk.Button(self.window, text='Detener', command=self.stopSimulation)
+        
         # Create a canvas for the GUI
         self.canvas = tk.Canvas(master=self.window, width=700, height=100)
+        
         # Configure the rows and columns of the GUI layout
         self.window.rowconfigure(0, weight=1)
         self.window.rowconfigure(1, weight=1)
@@ -88,6 +92,7 @@ class MySemaphore:
         self.entrySizeBuffer.grid(row=3, column=2)
         self.buttonStart.grid(row=4, column=2)
         self.buttonStop.grid(row=5, column=2)
+        self.label.grid(row=6, column=2)
 
         # #
         # self.frame = tk.Frame(self.window)
@@ -100,7 +105,7 @@ class MySemaphore:
         # plt.xlabel('Tiempo')
         # plt.ylabel('Cantidad de productos en el buffer')
 
-        self.labelBuffer.grid(row=7, column=0, columnspan=5, rowspan=4)
+        self.labelBuffer.grid(row=7, column=0, columnspan=9, rowspan=4)
 
     def validate_numbers(self, value):
         """Validates whether a value is a positive integer
@@ -132,7 +137,7 @@ class MySemaphore:
         consumer_idx = 0
         counter = 0
         buf_size = int(self.entrySizeBuffer.get())
-        buf =[" "] * buf_size
+        buf =[" - "] * buf_size
         numberConsumers = int(self.entryConsumers.get())
         numberProductors = int(self.entryProductos.get())
         self.createConsumers(numberConsumers)
@@ -152,12 +157,18 @@ class MySemaphore:
             with s:
                 if counter == buf_size:  # full
                     continue
-                buf[producer_idx] = "x"
+                buf[producer_idx] = " + "
                 producer_idx = (producer_idx + 1) % buf_size
-                print("{} <= produced 'x' at index='{}'".format(buf, producer_idx))
-                self.labelBuffer.config(text="{} => produced '{}' at index='{}'".format(buf, buf[consumer_idx], consumer_idx))
+                print("Productor {}: produjo {} \n Buffer {}".format(producer_idx, buf[producer_idx], buf))
+                self.label.config(text="Buffer: [{}]".format(' '.join(buf)))
+                self.labelBuffer.config(state="normal")
+                self.labelBuffer.insert("end","Productor     [{}]: produjo en posicion = {} \n \n".format(' '.join(buf), producer_idx))
+                self.labelBuffer.see("end")
+                self.labelBuffer.config(state="disabled")
                 counter += 1
-            sleep(3)
+                sleep(1)
+            sleep(1)
+            
 
     def consume(self):
         """represents the behavior of a consumer in the simulation. 
@@ -169,12 +180,17 @@ class MySemaphore:
             with s:
                 if counter == 0:  # empty
                     continue
-                buf[consumer_idx] = " "
+                buf[consumer_idx] = " - "
                 consumer_idx = (consumer_idx + 1) % buf_size
-                print("{} => consumed '{}' at index='{}'".format(buf, buf[consumer_idx], consumer_idx))
-                self.labelBuffer.config(text="{} => consumed '{}' at index='{}'".format(buf, buf[consumer_idx], consumer_idx))
+                print("Consumidor {}: consumió {} \n Buffer {}".format(consumer_idx, buf[consumer_idx], buf))
+                self.labelBuffer.config(state="normal")
+                self.labelBuffer.insert("end","Consumidor [{}]: consumió en posicion = {} \n \n".format(' '.join(buf), consumer_idx))
+                self.labelBuffer.see("end")
+                self.labelBuffer.config(state="disabled")
                 counter -= 1
-            sleep(3)
+                sleep(1)
+            sleep(1)
+            
         
     def createProducer(self, quantity):
         """This method creates a specified number of producer threads by calling the produce method that adds items to the buffer. 
